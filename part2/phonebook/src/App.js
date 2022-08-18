@@ -4,7 +4,7 @@ import {
   createPerson,
   deletePerson,
   updatePerson,
-} from "../Services/Persons/personsService.js";
+} from "./Services/Persons/personsService.js";
 
 const Filter = (props) => {
   return (
@@ -52,12 +52,43 @@ const Persons = (props) => {
     });
 };
 
+const Notification = ({ message }) => {
+  const styleError = {
+    color: "red",
+    background: "lightgrey",
+    fontSize: "20px",
+    borderStyle: "solid",
+    borderRadius: "5px",
+    padding: "10px",
+    marginBottom: "10px",
+  };
+
+  const styleOk = {
+    color: "green",
+    background: "lightgrey",
+    fontSize: "20px",
+    borderStyle: "solid",
+    borderRadius: "5px",
+    padding: "10px",
+    marginBottom: "10px",
+  };
+
+  if (message === null) {
+    return null;
+  }
+
+  if (message.includes("Information"))
+    return <div style={styleError}>{message}</div>;
+  return <div style={styleOk}>{message}</div>;
+};
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
   const [modified, setModified] = useState({});
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     getPersons().then((data) => {
@@ -77,9 +108,18 @@ const App = () => {
 
   const handleDelete = (event) => {
     if (window.confirm(`Confirm delete ${event.target.name}`))
-      deletePerson(event.target.value).then((response) => {
-        setModified(response.data);
-      });
+      deletePerson(event.target.value)
+        .then((response) => {
+          setModified(response.data);
+        })
+        .catch(() => {
+          setErrorMessage(
+            `Information of ${event.target.name} has already been removed from server`
+          );
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        });
   };
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -94,11 +134,18 @@ const App = () => {
             setModified(response);
           })
         : window.close()
-      : createPerson(newName, newNumber).then((response) => {
-          setPersons((prevPersons) => {
-            return prevPersons.concat(response.data);
+      : createPerson(newName, newNumber)
+          .then((response) => {
+            setPersons((prevPersons) => {
+              return prevPersons.concat(response.data);
+            });
+          })
+          .finally(() => {
+            setErrorMessage(`Added ${newName}`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
           });
-        });
 
     setNewNumber("");
     setNewName("");
@@ -106,6 +153,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
       <Filter search={search} handleSearch={handleSearch} />
 
       <h3>add a new</h3>
