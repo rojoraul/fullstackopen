@@ -107,9 +107,11 @@ const App = () => {
   };
 
   const handleDelete = (event) => {
+    console.log(event.target)
     if (window.confirm(`Confirm delete ${event.target.name}`))
       deletePerson(event.target.value)
         .then((response) => {
+          console.log(response)
           setModified(response.data);
         })
         .catch(() => {
@@ -125,12 +127,13 @@ const App = () => {
     event.preventDefault();
 
     const search = persons.find((item) => item.name === newName);
+    console.log(search)
 
     search
       ? window.confirm(
           `${newName} is already added to phonebook, replace the old number with a new one?`
         )
-        ? updatePerson({ ...test, number: newNumber }).then((response) => {
+        ? updatePerson(search.id, { name: search.name, number: newNumber }).then((response) => {
             setModified(response);
           })
         : window.close()

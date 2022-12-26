@@ -23,9 +23,9 @@ export const deletePerson = (id) => {
     });
 };
 
-export const updatePerson = (person) => {
+export const updatePerson = (id, person) => {
   return axios
-    .put(`http://localhost:3001/api/persons/${person.id}`, person)
+    .put(`http://localhost:3001/api/persons/${id}`, person)
     .then((response) => {
       const { data } = response;
       return data;
