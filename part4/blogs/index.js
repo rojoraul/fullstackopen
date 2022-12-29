@@ -1,23 +1,11 @@
 require('dotenv').config()
+require('./mongo')
 
 const http = require('http')
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const mongoose = require('mongoose')
-
-const blogSchema = new mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number
-})
-
-const Blog = mongoose.model('Blog', blogSchema)
-
-const mongoUrl = 
-    `mongodb+srv://rrojo:${process.env.PASSWORD}@cluster0.edfy6zh.mongodb.net/?retryWrites=true&w=majority`
-mongoose.connect(mongoUrl)
+const Blog = require('./models/Blog')
 
 app.use(cors())
 app.use(express.json())
