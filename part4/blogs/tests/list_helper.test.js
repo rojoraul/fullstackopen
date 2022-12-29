@@ -54,6 +54,30 @@ describe('total likes', () => {
     })    
 })
 
+describe('favorite blog', ()=> {
+    test('of empty list is undefined', () => {
+        const blogs = []
+        
+        const result = listHelper.favoriteBlog(blogs)
+        expect(result).toBe(undefined)
+    })
+
+    test('when list has only one blog equals the object of that', () => {
+        const blogs = [initialBlogs[0]]
+        
+        const result = listHelper.favoriteBlog(blogs)
+        expect(result).toEqual(blogs[0])
+    })
+
+    test('of a bigger list is calculated correctly', () => {
+        const result = listHelper.favoriteBlog(initialBlogs)
+        const likes = initialBlogs.map(blog => blog.likes)
+        const maxLikes = Math.max.apply(null, likes)
+
+        expect(result).toEqual(initialBlogs.find(blog => blog.likes === maxLikes))
+    })    
+})
+
 test('dummy returns one', () => {
     const blogs = []
   
